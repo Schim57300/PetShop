@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,17 +22,16 @@ public class PetShopVer1 {
 
     @Autowired
     public PetDAO petDao;
-    @RequestMapping(method=RequestMethod.GET)
-    public @ResponseBody PetShopVer1Output sayHello(@RequestParam(value="name", required=false, defaultValue="Stranger") String name) {
-        return new PetShopVer1Output(counter.incrementAndGet(), String.format(template, name));
-    }
+//    @RequestMapping(method=RequestMethod.GET)
+//    public @ResponseBody PetShopVer1Output sayHello(@RequestParam(value="name", required=false, defaultValue="Stranger") String name) {
+//        return new PetShopVer1Output(counter.incrementAndGet(), String.format(template, name));
+//    }
     
     /**
-     * GET /create  --> Create a new pet and save it in the database.
+     * POST /create  --> Create a new pet and save it in the database.
      */
-    @RequestMapping("/create")
-    @ResponseBody
-    public String create(String name, String category) {
+    @RequestMapping(value = "/pet/{name,category}", method= RequestMethod.POST)
+    public String create(@PathVariable("name") String name, @PathVariable("category") String category) {
       String petId = "";
       try {
         PetEntity pet = new PetEntity(category, name);
@@ -46,13 +46,12 @@ public class PetShopVer1 {
     }
     
     /**
-     * GET /delete  --> Delete the pet having the passed id.
+     * DELETE /delete  --> Delete the pet having the passed id.
      */
-    @RequestMapping("/delete")
-    @ResponseBody
-    public String delete(long id) {
+    @RequestMapping(value = "/pet/{id}", method= RequestMethod.DELETE)
+    public String delete(@PathVariable("id") String id) {
       try {
-    	PetEntity pet = new PetEntity(id);
+    	PetEntity pet = new PetEntity(Long.valueOf(id));
         petDao.delete(pet);
       }
       catch (Exception ex) {
@@ -62,19 +61,26 @@ public class PetShopVer1 {
     }
     
     /**
-     * GET /get-by-id  --> Return the name and category for the pet having the passed
+     * GET /findById --> Return the name and category for the pet having the passed
      * id.
      */
-    @RequestMapping("/findById")
-    @ResponseBody
-    public String getById(long id) {
-      PetEntity pet;
+    @RequestMapping(value = "/pet/{id}", method= RequestMethod.GET)
+    public @ResponseBody PetShopVer1Output getById(@PathVariable("id") String id) {
+      PetShopVer1Output result = new PetShopVer1Output(-1, "ERROR","ERROR","ERROR");
+      System.out.println("PET ID =="+id+".");
       try {
-        pet = petDao.findById(id);
+    	PetEntity pet = petDao.findById(Long.valueOf(id));
+        System.out.println("PET == "+pet);
+        result = new PetShopVer1Output(pet.getId(),
+        		pet.getName(),
+        		pet.getCategory(),
+        		pet.getStatus());
+        System.out.println("return == "+pet);
       }
       catch (Exception ex) {
-        return "Pet not found";
+    	  ex.printStackTrace();
       }
-      return "The pet is: " + pet;
+
+      return result;
     }
 }

@@ -79,6 +79,6 @@ public class PetEntity {
 	}
 
 	public String toString() {
-		return "{id=" + id + ";Name=" + name + ";Category=" + category + ";Status=" + status + "}";
+		return "{id=" + id + ";name=" + name + ";category=" + category + ";status=" + status + "}";
 	}
 }

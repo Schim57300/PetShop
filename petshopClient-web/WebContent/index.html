@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<script type="text/javascript"
+	src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.1/angular.min.js"></script>
+<title>Insert title here</title>
+</head>
+<body>
+
+	<div ng-app="myApp">
+		<div ng-controller="UserCtrl">
+			<p class="username">Welcome, {{ user.details.username }}</p>
+			<p class="id">User ID: {{ user.details.id }}</p>
+		</div>
+
+		<div ng-controller="MainCtrl">
+			<input type="text" ng-model="myModel" placeholder="Start typing..." />
+			<p>My model data: {{ myModel }}</p>
+		</div>
+
+		<div ng-controller="GetPetData">
+			<p>Pet information: {{ pet.name }}</p>
+		</div>
+
+		<a custom-button>Click me</a>
+	</div>
+
+	<script>
+		var myApp = angular.module('myApp', []);
+
+
+		//CONTROLLERS
+
+		myApp.controller('GetPetData', [ '$scope', '$http',
+		                                 
+		                                 
+
+				function($scope, $http) {
+			
+			$http.defaults.headers.put = {
+			        'Access-Control-Allow-Origin': '*',
+			        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+			        'Access-Control-Allow-Headers': 'Content-Type, X-Requested-With'
+			        };
+			 $http.defaults.useXDomain = true;
+
+					// Crée un Object user
+					$scope.pet = {};
+
+					// Initialise le modèle avec une chaîne vide
+					$scope.pet.name = '';
+
+					// Nous voulons effectuer la requête
+					// et obtenir le nom de l'utilisateur
+					$http({
+						method : 'GET',
+						url : '//localhost:9000/pet/4'
+					}).success(function(data, status, headers, config) {
+						// Ici nous assignons cet utilisateur à
+						// notre modèle existant !
+						console.log(data);
+						$scope.pet.name = data.name;
+					}).error(function(data, status, headers, config) {
+						// Une erreur est survenue
+					});
+				} ]);
+		myApp.controller('UserCtrl', [ '$scope', function($scope) {
+
+			// Créons un namespace pour les détails de l'utilisateur
+			// Également utile pour une aide visuelle dans le DOM
+			$scope.user = {};
+			$scope.user.details = {
+				"username" : "Eric Kam",
+				"id" : "89101112"
+			};
+
+		} ]);
+
+		myApp.controller('MainCtrl', [ '$scope', function($scope) {
+			// On capture la donnée du modèle
+			// et/ou on l'initialise avec une chaîne de caractères vide
+			$scope.myModel = '';
+		} ]);
+		//DIRECTIVES
+		myApp.directive('customButton', function() {
+			return {
+				restrict : 'A',
+				replace : true,
+				transclude : true,
+				template : '<a href="" class="myawesomebutton" ng-transclude>'
+						+ '<i class="icon-ok-sign"></i>' + '</a>',
+				link : function(scope, element, attrs) {
+					// DOM manipulation/events here!
+				}
+			};
+		});
+
+		//SERVICES
+		myApp.service('Math', function() {
+			this.multiply = function(x, y) {
+				return x * y;
+			};
+		});
+	</script>
+</body>
+</html>
