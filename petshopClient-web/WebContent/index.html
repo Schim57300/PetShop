@@ -9,66 +9,92 @@
 <body>
 
 	<div ng-app="myApp">
+		<!-- ONLY FOR TEST -->
 		<div ng-controller="UserCtrl">
 			<p class="username">Welcome, {{ user.details.username }}</p>
-			<p class="id">User ID: {{ user.details.id }}</p>
 		</div>
 
+		<!-- BUTTON SHOULD CALL WEBSERVICE AND REFRESH THE LIST -->
 		<div ng-controller="MainCtrl">
-			<input type="text" ng-model="myModel" placeholder="Start typing..." />
-			<p>My model data: {{ myModel }}</p>
+			<input type="text" ng-model="myModel" ng-change="myFunction(myModel)" placeholder="Start typing..." />
+			<button ng-click="my-name('2')">Filter</button>
+			<a ng-click="list-manager.refresh-list('3')">Click me</a>
 		</div>
 
-		<div ng-controller="GetPetData">
-			<p>Pet information: {{ pet.name }}</p>
+	
+		<!-- MY LIST, SUCCESSFULLY INITIALIZED AFTER PAGE LOADING -->
+		<div ng-controller="GetPetDataCtrl">
+			<div class="pet" ng-repeat="item in pets" id="{{item.id}}"
+				ng-click="pets.select(item)">
+				<h2>{{item.name}}</h2>
+				<p>Category: {{item.category}}</p>
+				<p>Status: {{item.status}}</p>
+				<button>Delete</button>
+			</div>
+			
 		</div>
-
-		<a custom-button>Click me</a>
 	</div>
 
 	<script>
 		var myApp = angular.module('myApp', []);
 
+		//SERVICES
+		//Call my webservice with a parameter
+		myApp.service('ListManager', function($http) {
+			this.refreshList = function($scope, $http, petId) {
+				if (angular.isUndefined(petId)) {
+					petId = '*';
+				}
+				console.log(petId);
+				$http({
+					method : 'GET',
+					url : '//localhost:9000/pet/' + petId
+				}).success(function(data, status, headers, config) {
+					console.log(data.list);
+					//Should refresh the list?
+					$scope.pets = data.list;
+					
+				}).error(function(data, status, headers, config) {
+					// Error raised
+				});
+			};
+		});
 
 		//CONTROLLERS
-
-		myApp.controller('GetPetData', [ '$scope', '$http',
-		                                 
-		                                 
-
-				function($scope, $http) {
-			
-			$http.defaults.headers.put = {
-			        'Access-Control-Allow-Origin': '*',
-			        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-			        'Access-Control-Allow-Headers': 'Content-Type, X-Requested-With'
-			        };
-			 $http.defaults.useXDomain = true;
-
-					// Crée un Object user
-					$scope.pet = {};
-
-					// Initialise le modèle avec une chaîne vide
-					$scope.pet.name = '';
-
-					// Nous voulons effectuer la requête
-					// et obtenir le nom de l'utilisateur
-					$http({
-						method : 'GET',
-						url : '//localhost:9000/pet/4'
-					}).success(function(data, status, headers, config) {
-						// Ici nous assignons cet utilisateur à
-						// notre modèle existant !
-						console.log(data);
-						$scope.pet.name = data.name;
-					}).error(function(data, status, headers, config) {
-						// Une erreur est survenue
-					});
+		//Controler of my pet list
+		myApp.controller('GetPetDataCtrl', [ '$scope', 'ListManager', '$http',
+				function($scope, ListManager, $http, petId) {
+					ListManager.refreshList($scope, $http, petId);
 				} ]);
+
+		//TEST : wanted to call my service from everywhere (ng-click?)
+		function MyCtrl($scope, $http, ListManager) {
+			
+			console.log('CALL1');
+		    $scope.myName = function(petId) {
+		         console.log('Hello ' + $scope.myModel);
+		         ListManager.refreshList($scope, $http, petId);
+		    }
+		    console.log('CALL2');
+			$scope.myFunction = function(petId){
+				ListManager.refreshList($scope, $http, petId);    
+			}
+		}
+		
+		//ONLY FOR TEST. 
+		myApp.controller('MainCtrl', [ '$scope','ListManager', '$http',  
+		         function($scope, MyCtrl) {
+			if (angular.isNumber($scope.myModel)) {
+				console.log('isNumber');
+			} else {
+				console.log('noNumber');
+			}
+			$scope.myModel = '';
+		} ]);
+
+		//FOR TEST
 		myApp.controller('UserCtrl', [ '$scope', function($scope) {
 
-			// Créons un namespace pour les détails de l'utilisateur
-			// Également utile pour une aide visuelle dans le DOM
 			$scope.user = {};
 			$scope.user.details = {
 				"username" : "Eric Kam",
@@ -77,31 +103,6 @@
 
 		} ]);
 
-		myApp.controller('MainCtrl', [ '$scope', function($scope) {
-			// On capture la donnée du modèle
-			// et/ou on l'initialise avec une chaîne de caractères vide
-			$scope.myModel = '';
-		} ]);
-		//DIRECTIVES
-		myApp.directive('customButton', function() {
-			return {
-				restrict : 'A',
-				replace : true,
-				transclude : true,
-				template : '<a href="" class="myawesomebutton" ng-transclude>'
-						+ '<i class="icon-ok-sign"></i>' + '</a>',
-				link : function(scope, element, attrs) {
-					// DOM manipulation/events here!
-				}
-			};
-		});
-
-		//SERVICES
-		myApp.service('Math', function() {
-			this.multiply = function(x, y) {
-				return x * y;
-			};
-		});
 	</script>
 </body>
 </html>
