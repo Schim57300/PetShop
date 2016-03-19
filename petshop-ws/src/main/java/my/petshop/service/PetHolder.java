@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 import my.petshop.models.PetEntity;
 
-public class PetShopVer2Output {
+public class PetHolder {
 
 	private ArrayList<PetEntity> list;
 
-    public PetShopVer2Output() {
+    public PetHolder() {
     	this.list = new ArrayList<PetEntity>();
     }
 

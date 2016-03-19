@@ -2,19 +2,20 @@ package my.petshop.service;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import my.petshop.models.PetDAO;
 import my.petshop.models.PetEntity;
 
-@Controller
-public class PetShopVer1 {
+@RestController
+public class PetShopService {
 	
 
     @Autowired
@@ -23,9 +24,10 @@ public class PetShopVer1 {
     /**
      * POST /create  --> Create a new pet and save it in the database.
      */
-    @RequestMapping(value = "/pet/{name,category}", method= RequestMethod.POST)
-    public @ResponseBody String create(@PathVariable("name") String name, @PathVariable("category") String category) {
+    @RequestMapping(value = "/pet", method= RequestMethod.POST, headers = "Content-type: application/*")
+    public String create(@RequestBody String name, @RequestBody String category) {
       String petId = "";
+      System.out.println("In POST");
       try {
         PetEntity pet = new PetEntity(category, name);
         pet = petDao.save(pet);
@@ -38,11 +40,17 @@ public class PetShopVer1 {
       return "Pet succesfully created with id = " + petId;
     }
     
+    @RequestMapping(value = "/pet", method = RequestMethod.POST)
+    public void add(@RequestBody List<String> tags) {
+    	System.out.println("In POST2");
+        System.out.println(tags);
+    }
+    
     /**
      * DELETE /delete  --> Delete the pet having the passed id.
      */
     @RequestMapping(value = "/pet/{id}", method= RequestMethod.DELETE)
-    public @ResponseBody String delete(@PathVariable("id") String id) {
+    public String delete(@PathVariable("id") String id) {
       try {
     	PetEntity pet = new PetEntity(Long.valueOf(id));
         petDao.delete(pet);
@@ -58,9 +66,9 @@ public class PetShopVer1 {
      * id.
      */
     @RequestMapping(value = "/pet/{id}", method= RequestMethod.GET)
-    public @ResponseBody PetShopVer2Output getById(@PathVariable("id") String id) {
+    public PetHolder getById(@PathVariable("id") String id) {
     	
-    	PetShopVer2Output output = new PetShopVer2Output();
+    	PetHolder output = new PetHolder();
       System.out.println("PET ID =="+id+".");
       try {
     	if (id.trim().equalsIgnoreCase("*")){

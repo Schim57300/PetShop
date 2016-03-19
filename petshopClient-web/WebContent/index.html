@@ -1,9 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<script type="text/javascript"
-	src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.1/angular.min.js"></script>
+<meta charset=UTF-8>
+	<script type="text/javascript"
+		src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.1/angular.min.js"></script>
+	<script	src="js/app.js"></script>
+ 	<script src="js/controller.js"></script>
+ 	<script src="js/service.js"></script>
 <title>Insert title here</title>
 </head>
 <body>
@@ -49,111 +52,5 @@
 			</div>
 		</div>
 	</div>
-
-	<script>
-		var myApp = angular.module('myApp', []);
-
-		//SERVICES
-		//Call my webservice with a parameter
-		myApp.service('ListManager', function($http) {
-			this.refreshList = function($scope, $http, petId) {
-				//In case there is no index, search all pets
-				if (angular.isUndefined(petId) || petId == "") {
-					petId = '*';
-				}
-				$http({
-					method : 'GET',
-					url : '//localhost:9000/pet/' + petId
-				}).success(function(data, status, headers, config) {
-					console.log(data.list);
-					$scope.pets = data.list;
-
-				}).error(function(data, status, headers, config) {
-					// Error raised
-				});
-			};
-
-			this.deletePet = function($scope, $http, petId) {
-				console.log("About to delete pet #" + petId + ".");
-				//In case there is no index, search all pets
-				if (angular.isUndefined(petId) || petId == "") {
-					console.log('No petId');
-					return;
-				}
-				$http({
-					method : 'DELETE',
-					url : '//localhost:9000/pet/' + petId
-				}).success(function(data, status, headers, config) {
-					console.log('Deletion done for #' + petId);
-					//TODO : set a delay between DELETE and REFRESH_LIST
-				}).error(function(data, status, headers, config) {
-					// Error raised
-				});
-			};
-			this.storeNewPet = function($scope, $http, petName, petCategory) {
-				console.log("About to add pet #" + petName+ "/"+petCategory+".");
-				//In case there is no index, search all pets
-				if (angular.isUndefined(petName) || angular.isUndefined(petCategory)) {
-					console.log('Invalid data');
-					return;
-				}
-				var dataToSend = [{
-			        "name": petName,
-			        "category": petCategory
-			    }];
-				
-				$http({
-					method : 'POST',
-					url : '//localhost:9000/pet/',
-					dataToSend
-				}).success(function(data, status, headers, config) {
-					console.log('Insert done ');
-					//TODO : set a delay between DELETE and REFRESH_LIST
-				}).error(function(data, status, headers, config) {
-					// Error raised
-				});
-			};
-		});
-
-		//CONTROLLERS
-		//Controler of my pet list
-		myApp.controller('ListDataCtrl', [
-				'$scope',
-				'ListManager',
-				'$http',
-				function($scope, ListManager, $http) {
-					ListManager.refreshList($scope, $http);
-
-					$scope.deleteSelectedPet = function(idToRemove) {
-						console.log("Delete:" + idToRemove + ".");
-						ListManager.deletePet($scope, $http, idToRemove);
-						console.log("Refreshing list with filter set to #"
-								+ $scope.myModel + ".");
-						$scope.refreshList($scope, $http, $scope.myModel);
-					}
-
-					$scope.refreshList = function() {
-						console.log("Filter=" + $scope.myModel + ".");
-						ListManager.refreshList($scope, $http, $scope.myModel);
-					}
-					
-					$scope.storeNewPet = function() {
-						console.log("new=" + $scope.newPetName + "/"+ $scope.newPetCategory + ".");
-						ListManager.storeNewPet($scope, $http, $scope.newPetName, $scope.newPetCategory);
-					}
-					
-				} ]);
-
-		//FOR TEST
-		myApp.controller('UserCtrl', [ '$scope', function($scope) {
-
-			$scope.user = {};
-			$scope.user.details = {
-				"username" : "Eric Kam",
-				"id" : "89101112"
-			};
-
-		} ]);
-	</script>
 </body>
 </html>
