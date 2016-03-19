@@ -1,5 +1,7 @@
 package my.petshop.service;
 
+import my.petshop.models.PetEntity;
+
 public class PetShopVer1Output {
 
     private final long id;
@@ -15,7 +17,14 @@ public class PetShopVer1Output {
         this.status = status;
     }
 
-    public long getId() {
+    public PetShopVer1Output(PetEntity pet) {
+        this.id = pet.getId();
+        this.name = pet.getName();
+        this.category =pet.getCategory();
+        this.status = pet.getStatus();
+    }
+
+	public long getId() {
         return id;
     }
 
