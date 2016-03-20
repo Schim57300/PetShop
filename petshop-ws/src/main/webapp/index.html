@@ -34,7 +34,7 @@
 				<div class="pet" ng-repeat="item in pets" id="{{item.id}}"
 					ng-click="pets.select(item)">
 					<h2>{{item.name}}</h2>
-					<p>Category: {{item.category}}</p>
+					<p>Category: {{item.category.name}}</p>
 					<p>Status: {{item.status}}</p>
 					<p>Id: {{item.id}}</p>
 					<!-- DELETE BUTTON, ONLY VISIBLE BY ADMIN -->

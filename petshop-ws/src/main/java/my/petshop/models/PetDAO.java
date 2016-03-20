@@ -7,6 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 @Transactional
 public interface PetDAO extends CrudRepository<PetEntity, Long> {
 
-  public PetEntity findById(long id);
+  public PetEntity findById(long pet_id);
 
 }
