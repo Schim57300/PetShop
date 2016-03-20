@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.persistence.Id;
 
-import my.petshop.common.MyConstante;
+import my.petshop.common.MyConstantes;
 
 @Entity
 @Table(name = "pets")
@@ -75,7 +75,7 @@ public class PetEntity {
 	public PetEntity(String category, String name) {
 		this.category = category;
 		this.name = name;
-		this.status = MyConstante.AVAILABLE_STATUS;
+		this.status = MyConstantes.AVAILABLE_STATUS;
 	}
 
 	public String toString() {

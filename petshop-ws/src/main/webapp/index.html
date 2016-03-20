@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset=UTF-8>
+<script type="text/javascript"
+	src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.1/angular.min.js"></script>
+<script src="js/app.js"></script>
+<script src="js/controller.js"></script>
+<script src="js/service.js"></script>
+<title>Pet Store</title>
+
+<style type="text/css">
+[ng\:cloak], [ng-cloak], .ng-cloak {
+	display: none !important;
+}
+</style>
+</head>
+<body ng-app="myApp">
+
+	<div>
+		<!-- DISPLAY THE NAME OF THE USER -->
+		<div ng-controller="UserCtrl" data-ng-show="connectedUser.profile>0">
+			<p class="username">Welcome, {{connectedUser.name}} <button ng-click="logout()">Logout</button></p>
+		</div>
+
+		<!-- PET LIST, ONLY VISIBLE BY GUEST AND ADMIN -->
+		<div ng-controller="ListDataCtrl">
+
+			<div id="panelPetList" style="width: 35%; float: left; height: inherit;" data-ng-show="connectedUser.profile>0">
+				<input ng-model="myModel" type="number" ngTrim name="inputPetId"
+					placeholder="Start typing..." />
+				<button ng-click="refreshList()">Filter</button>
+
+				<div class="pet" ng-repeat="item in pets" id="{{item.id}}"
+					ng-click="pets.select(item)">
+					<h2>{{item.name}}</h2>
+					<p>Category: {{item.category}}</p>
+					<p>Status: {{item.status}}</p>
+					<p>Id: {{item.id}}</p>
+					<!-- DELETE BUTTON, ONLY VISIBLE BY ADMIN -->
+					<button ng-click='deleteSelectedPet(item.id)' data-ng-show="connectedUser.profile>1">REMOVE</button>
+				</div>
+			</div>
+			
+			<!-- STORE PANEL, ONLY VISIBLE BY ADMIN -->
+			<div id="panelPetInfo" style="width: 65%; float: right; height: inherit;" data-ng-show="connectedUser.profile>1">
+				<p>Store a pet:
+				<p>
+				<form name="storingPetForm" ng-submit="storeNewPet()" novalidate>
+					<label>Pet name : </label> <input ng-model="newPetName"
+						name="petName" type="text" required />
+					<p
+						ng-show="storingPetForm.petName.$invalid && storingPetForm.petName.$pristine"
+						class="help-block">The name is required.</p>
+					<br /> <label>Category : </label> <input ng-model="newPetCategory"
+						name="petCategory" type="text" required />
+					<p
+						ng-show="storingPetForm.petCategory.$invalid && storingPetForm.petCategory.$pristine"
+						class="help-block">The category is required.</p>
+					<br /> <input type="submit" value="STORE"
+						ng-disabled="storingPetForm.$invalid" />
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- LOGIN FORM, ONLY VISIBLE BY VISITOR -->
+	<div class="container-fluid" data-ng-controller="LoginCtrl" data-ng-hide="connectedUser.profile>0">
+		<div class="navbar-header">
+			<h3>
+				Welcome on the Pet Store.<br />Please log in
+			</h3>
+		</div>
+		<ul>
+			<label>Login    : </label>
+			<input ng-model="userLogin" name="userLogin" type="text" required />
+			<p ng-show="userLogin.$pristine" class="help-block">The Login is required.</p>
+			<br />
+			<label>Password : </label>
+			<input ng-model="userPwd" name="userPwd" type="password" required />
+			<p ng-show="userPwd.$pristine" class="help-block">The category is required.</p>
+			<br />
+			<br />
+			
+			<button ng-click="submitLogin()">Login</button>
+			<p ng-show="connectedUser.profile==-1" class="help-block">Unknown user.</p>
+		</ul>
+	</div>
+</body>
+</html>

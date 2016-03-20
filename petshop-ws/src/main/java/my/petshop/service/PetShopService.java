@@ -2,7 +2,6 @@ package my.petshop.service;
 
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,28 +23,26 @@ public class PetShopService {
     /**
      * POST /create  --> Create a new pet and save it in the database.
      */
-    @RequestMapping(value = "/pet", method= RequestMethod.POST, headers = "Content-type: application/*")
-    public String create(@RequestBody String name, @RequestBody String category) {
-      String petId = "";
-      System.out.println("In POST");
+    @RequestMapping(value = "/pet", method= RequestMethod.POST)
+    public String create(@RequestBody PetHolder pPetHolder) {
+    
+    	if (pPetHolder == null ||
+    			pPetHolder.getList().isEmpty() ||
+    			pPetHolder.getList().get(0).getClass().isInstance(PetEntity.class)){
+    		return "ERROR DURING CREATION";
+    	}
+    		
       try {
-        PetEntity pet = new PetEntity(category, name);
+        PetEntity pet = pPetHolder.getList().get(0);
         pet = petDao.save(pet);
-        petId = String.valueOf(pet.getId());
       }
       catch (Exception ex) {
     	  ex.printStackTrace();
         return "Error creating the pet: " + ex.toString();
       }
-      return "Pet succesfully created with id = " + petId;
+      return "Pet succesfully created";
     }
-    
-    @RequestMapping(value = "/pet", method = RequestMethod.POST)
-    public void add(@RequestBody List<String> tags) {
-    	System.out.println("In POST2");
-        System.out.println(tags);
-    }
-    
+
     /**
      * DELETE /delete  --> Delete the pet having the passed id.
      */
@@ -62,15 +59,14 @@ public class PetShopService {
     }
     
     /**
-     * GET /findById --> Return the name and category for the pet having the passed
-     * id.
+     * GET /findById --> Return the pet having the passed id.
+     * In case there is no id, the service returns all the pets
      */
     @RequestMapping(value = "/pet/{id}", method= RequestMethod.GET)
     public PetHolder getById(@PathVariable("id") String id) {
     	
     	PetHolder output = new PetHolder();
-      System.out.println("PET ID =="+id+".");
-      try {
+    	try {
     	if (id.trim().equalsIgnoreCase("*")){
     		output.add((ArrayList<PetEntity>)petDao.findAll());
     	}else {
