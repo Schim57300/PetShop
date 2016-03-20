@@ -7,6 +7,10 @@
 				'Auth',
 				function($rootScope, $scope, ListManager, $http,Auth) {
 					ListManager.refreshList($scope, $http);
+					//Initialization of filter placeholder
+					$scope.somePlaceholder = 'Find a pet by its identifier';
+					var speciesList = {"categories":[{"id":1,"name":"Dog"},{"id":2,"name":"Cat"},{"id":3,"name":"Lizard"},{"id":4,"name":"Fish"}]};
+					$scope.categories = speciesList.categories;
 
 					$scope.refreshList = function() {
 						console.log("Filter=" + $scope.myModel + ".");
@@ -21,7 +25,7 @@
 
 					$scope.storeNewPet = function() {
 						console.log("New=" + $scope.newPetName + "/"+ $scope.newPetCategory + ".");
-						ListManager.storeNewPet($scope, $http, $scope.newPetName, $scope.newPetCategory);
+						ListManager.storeNewPet($scope, $http, $scope.newPetName, $scope.newPetCategory,$scope.newPetPhoto,$scope.newPetTags);
 						$scope.refreshList($scope, $http, $scope.myModel);
 					}
 					

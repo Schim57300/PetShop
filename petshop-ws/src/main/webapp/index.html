@@ -28,7 +28,7 @@
 
 			<div id="panelPetList" style="width: 35%; float: left; height: inherit;" data-ng-show="connectedUser.profile>0">
 				<input ng-model="myModel" type="number" ngTrim name="inputPetId"
-					placeholder="Start typing..." />
+					placeholder="{{somePlaceholder}}" />
 				<button ng-click="refreshList()">Filter</button>
 
 				<div class="pet" ng-repeat="item in pets" id="{{item.id}}"
@@ -47,18 +47,19 @@
 				<p>Store a pet:
 				<p>
 				<form name="storingPetForm" ng-submit="storeNewPet()" novalidate>
-					<label>Pet name : </label> <input ng-model="newPetName"
-						name="petName" type="text" required />
-					<p
-						ng-show="storingPetForm.petName.$invalid && storingPetForm.petName.$pristine"
-						class="help-block">The name is required.</p>
-					<br /> <label>Category : </label> <input ng-model="newPetCategory"
-						name="petCategory" type="text" required />
-					<p
-						ng-show="storingPetForm.petCategory.$invalid && storingPetForm.petCategory.$pristine"
-						class="help-block">The category is required.</p>
-					<br /> <input type="submit" value="STORE"
-						ng-disabled="storingPetForm.$invalid" />
+					<label>Pet name : </label> <input ng-model="newPetName" name="petName" type="text" required />
+					<br/>
+					  <label>Category:
+					    <select ng-model="newPetCategory" ng-options="categorie.name for categorie in categories"></select>
+					  </label>
+					 <br/>
+					 <label>Photos URL: </label> <input ng-model="newPetPhoto" name="petPhoto" type="text" />
+					<br/>
+					<label>Tags:
+					  <select ng-model="newPetTags" ng-options="tag.name for tag in categories"></select>
+					  </label>
+					<br/> 
+					<input type="submit" value="STORE" ng-disabled="storingPetForm.$invalid" />
 				</form>
 			</div>
 		</div>
