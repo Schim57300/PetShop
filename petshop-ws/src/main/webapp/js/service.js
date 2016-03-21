@@ -5,7 +5,7 @@ myApp.service('Auth', function() {
 		console.log("About to connect user for " + $scope.userLogin + "/" + $scope.userPwd+".");
 		$http({
 			method : 'POST',
-			url : '//192.168.0.27:9000/login/',
+			url : '//localhost:9000/login/',
 			data: JSON.stringify({"userLogin" : $scope.userLogin, "userPassword" : $scope.userPwd}),
 			headers: {'Content-Type': 'application/json'}
 		}).success(function(receivedUser) {
@@ -32,7 +32,7 @@ myApp.service('ListManager', function($http) {
 		}
 		$http({
 			method : 'GET',
-			url : '//192.168.0.27:9000/pet/' + petId
+			url : '//localhost:9000/pet/' + petId
 		}).success(function(data, status, headers, config) {
 			console.log("Status:"+status);
 			console.log(data.list);
@@ -46,6 +46,7 @@ myApp.service('ListManager', function($http) {
 			//We clean the input and display the error message
 			$scope.myModel = null;
 			$scope.somePlaceholder = 'Unknown identifier';
+			angular.copy({},$scope.pets);
 		});
 	};
 
@@ -58,7 +59,7 @@ myApp.service('ListManager', function($http) {
 		}
 		$http({
 			method : 'DELETE',
-			url : '//192.168.0.27:9000/pet/' + petId
+			url : '//localhost:9000/pet/' + petId
 		}).success(function(data, status, headers, config) {
 			console.log("Status:"+status);
 			console.log('Deletion done for #' + petId);
@@ -78,7 +79,7 @@ myApp.service('ListManager', function($http) {
 		
 		$http({
 			method : 'POST',
-			url : '//192.168.0.27:9000/pet/',
+			url : '//localhost:9000/pet/',
 			data: JSON.stringify({"list":[{ 'id' : 0, 'category' : {'id' : petCategory.id, 'name' : petCategory.name},  'name' : petName, 'photoUrls' : [' '], 'tags' : [{'id':1, 'name' : 'tag1'},{'id':2, 'name' : 'tag2'}] ,'status' : 'AVAILABLE' }]}),
 			headers: {'Content-Type': 'application/json'}
 		}).success(function(data, status, headers, config) {

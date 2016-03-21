@@ -2,89 +2,178 @@
 <html lang="fr">
 <head>
 <meta charset=UTF-8>
-<script type="text/javascript"
-	src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.1.1/angular.min.js"></script>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Import AngularJS -->
+<script type="text/javascript" src="js/ext/angular.min.js"></script>
+
+<!-- Import custom scripts -->
 <script src="js/app.js"></script>
 <script src="js/controller.js"></script>
 <script src="js/service.js"></script>
 <title>Pet Store</title>
 
-<style type="text/css">
-[ng\:cloak], [ng-cloak], .ng-cloak {
-	display: none !important;
+<!-- Bootstrap Core CSS -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/bootstrap-theme.css" rel="stylesheet">
+
+<!-- Custom CSS -->
+<style>
+body {
+	padding-top: 70px;
+	/* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
 }
 </style>
+
 </head>
 <body ng-app="myApp">
 
 	<div>
-		<!-- DISPLAY THE NAME OF THE USER -->
-		<div ng-controller="UserCtrl" data-ng-show="connectedUser.profile>0">
-			<p class="username">Welcome, {{connectedUser.name}} <button ng-click="logout()">Logout</button></p>
-		</div>
-
-		<!-- PET LIST, ONLY VISIBLE BY GUEST AND ADMIN -->
-		<div ng-controller="ListDataCtrl">
-
-			<div id="panelPetList" style="width: 35%; float: left; height: inherit;" data-ng-show="connectedUser.profile>0">
-				<input ng-model="myModel" type="number" ngTrim name="inputPetId"
-					placeholder="{{somePlaceholder}}" />
-				<button ng-click="refreshList()">Filter</button>
-
-				<div class="pet" ng-repeat="item in pets" id="{{item.id}}"
-					ng-click="pets.select(item)">
-					<h2>{{item.name}}</h2>
-					<p>Category: {{item.category.name}}</p>
-					<p>Status: {{item.status}}</p>
-					<p>Id: {{item.id}}</p>
-					<!-- DELETE BUTTON, ONLY VISIBLE BY ADMIN -->
-					<button ng-click='deleteSelectedPet(item.id)' data-ng-show="connectedUser.profile>1">REMOVE</button>
+		<!-- DISPLAY THE NAME OF THE USER IN THE HEADER -->
+		<nav class="navbar navbar-default navbar-fixed-top" ng-controller="UserCtrl">
+			<div class="container">
+				<div class="nav navbar-nav navbar-left" data-ng-show="connectedUser.profile>0">
+					<p class="navbar-brand">Welcome, {{connectedUser.name}}</p>
+				</div>
+				<div class="nav navbar-nav navbar-left" data-ng-hide="connectedUser.profile>0">
+					<p class="navbar-brand">Welcome to the Pet Store</p>
+				</div>
+				<div class="nav navbar-nav navbar-right" data-ng-show="connectedUser.profile>0">
+					<p class="navbar-brand">
+						<button type="button" class="btn btn-default btn-sm" ng-click="logout()">
+							  <span class="glyphicon glyphicon-off" aria-hidden="true"></span> Logout
+						</button>
+					</p>
 				</div>
 			</div>
-			
+		</nav>
+		<div class="row" ng-controller="ListDataCtrl">
+			<!-- PET LIST, ONLY VISIBLE BY GUEST AND ADMIN -->
+			<div id="panelPetList" class="col-xs-6" data-ng-show="connectedUser.profile>0">
+				<div class="input-group">
+					<input ng-model="myModel" type="number" class="form-control" ngTrim placeholder="{{somePlaceholder}}"> 
+					<span class="input-group-btn">
+						<button class="btn btn-default" ng-click="refreshList()" type="button">Filter</button>
+					</span>
+				</div>
+				<div class="panel panel-default" ng-repeat="item in pets" id="{{item.id}}">
+				  <div class="panel-heading"><strong>{{item.name}}</strong></div>
+				  <!-- Table -->
+				  <table class="table">
+				  <thead>
+				  <tr> <th>#</th> <th>Category</th> <th>Status</th> <th></th> </tr>
+				  </thead>
+				  	<td>{{item.id}}</td>
+				   	<td>{{item.category.name}}</td>
+				   	<td>{{item.status}}</td>
+				   	<!-- REMOVE BUTTON IS ONLY VISIBLE FOR ADMIN -->
+				   	<td><button ng-click='deleteSelectedPet(item.id)'data-ng-show="connectedUser.profile>1" class="btn btn-primary btn-xs">REMOVE</button></td>
+				  </table>
+				</div>
+			</div>
+
 			<!-- STORE PANEL, ONLY VISIBLE BY ADMIN -->
-			<div id="panelPetInfo" style="width: 65%; float: right; height: inherit;" data-ng-show="connectedUser.profile>1">
-				<p>Store a pet:
-				<p>
-				<form name="storingPetForm" ng-submit="storeNewPet()" novalidate>
-					<label>Pet name : </label> <input ng-model="newPetName" name="petName" type="text" required />
-					<br/>
-					  <label>Category:
-					    <select ng-model="newPetCategory" ng-options="categorie.name for categorie in categories"></select>
-					  </label>
-					 <br/>
-					 <label>Photos URL: </label> <input ng-model="newPetPhoto" name="petPhoto" type="text" />
-					<br/>
-					<label>Tags:
-					  <select ng-model="newPetTags" ng-options="tag.name for tag in categories"></select>
-					  </label>
-					<br/> 
-					<input type="submit" value="STORE" ng-disabled="storingPetForm.$invalid" />
+			<div id="panelPetInfo" class="col-xs-6" data-ng-show="connectedUser.profile>1">
+				<form name="storingPetForm" ng-model="storingPetForm" class="form-horizontal" ng-submit="storeNewPet()" novalidate>
+					<fieldset>
+						<!-- Form Name -->
+						<legend>Store a pet</legend>
+				
+						<!-- Text input-->
+						<div class="form-group">
+							<label class="col-md-4 control-label" for="Name">Pet name</label>
+							<div class="col-md-4">
+								<input id="Name" name="Name" type="text"  ng-model="newPetName" placeholder="Pet name"
+									class="form-control input-md" required>
+							</div>
+							<div class="col-md-4">
+								<label class="col-md-4 control-label" for="storeButton">(required)</label>
+							</div>
+						</div>
+
+						<!-- Select Basic -->
+						<div class="form-group">
+							<label class="col-md-4 control-label" for="petCategory">Category</label>
+							<div class="col-md-4">
+								<select id="petCategory" name="petCategory" class="form-control" ng-model="newPetCategory" ng-options="categorie.name for categorie in categories" required>
+								</select>
+							</div>
+							<div class="col-md-4">
+								<label class="col-md-4 control-label" for="storeButton">(required)</label>
+							</div>
+						</div>
+
+						<!-- Select Multiple -->
+						<div class="form-group">
+							<label class="col-md-4 control-label" for="tags">Tags</label>
+							<div class="col-md-4">
+								<select id="tags" name="tags" class="form-control"
+									multiple="multiple" ng-model="newPetTags" ng-options="tag.name for tag in tags">
+								</select>
+							</div>
+						</div>
+
+						<!-- Textarea -->
+						<div class="form-group">
+							<label class="col-md-4 control-label" for="photoURL">Photo
+								URL</label>
+							<div class="col-md-4">
+								<textarea class="form-control" id="photoURL" name="photoURL" ng-model="newPetPhoto"></textarea>
+							</div>
+						</div>
+
+						<!-- Button -->
+						<div class="form-group">
+							<label class="col-md-4 control-label" for="storeButton"></label>
+							<div class="col-md-4">
+								<button id="storeButton" name="storeButton"
+									class="btn btn-primary" ng-disabled="storingPetForm.$invalid">Store</button>
+							</div>
+						</div>
+
+					</fieldset>
 				</form>
+
 			</div>
 		</div>
 	</div>
+
 	<!-- LOGIN FORM, ONLY VISIBLE BY VISITOR -->
-	<div class="container-fluid" data-ng-controller="LoginCtrl" data-ng-hide="connectedUser.profile>0">
-		<div class="navbar-header">
-			<h3>
-				Welcome on the Pet Store.<br />Please log in
-			</h3>
+	<div class="container">
+		<div class="row" id="pwd-container" data-ng-controller="LoginCtrl"
+			data-ng-hide="connectedUser.profile>0">
+			<div class="col-md-4"></div>
+
+			<div class="col-md-4">
+				<section class="login-form">
+					<form method="post" action="#" role="login">
+						<img src="images/logo.png" class="img-responsive" alt="" /> 
+						<input
+							ng-model="userLogin" type="text" name="login"
+							placeholder="Enter your login" required
+							class="form-control input-lg" /> <input ng-model="userPwd"
+							type="password" class="form-control input-lg" id="password"
+							placeholder="Password" required="" />
+						<button ng-click="submitLogin()" type="submit" name="go"
+							class="btn btn-lg btn-primary btn-block">Sign in</button>
+						<p ng-show="connectedUser.profile==-1" class="alert alert-danger">Unknown
+							user</p>
+					</form>
+				</section>
+			</div>
+			<!-- /.row -->
+
 		</div>
-		<ul>
-			<label>Login    : </label>
-			<input ng-model="userLogin" name="userLogin" type="text" required />
-			<p ng-show="userLogin.$pristine" class="help-block">The Login is required.</p>
-			<br />
-			<label>Password : </label>
-			<input ng-model="userPwd" name="userPwd" type="password" required />
-			<p ng-show="userPwd.$pristine" class="help-block">The category is required.</p>
-			<br />
-			<br />
-			
-			<button ng-click="submitLogin()">Login</button>
-			<p ng-show="connectedUser.profile==-1" class="help-block">Unknown user.</p>
-		</ul>
 	</div>
+	<!-- /.container -->
+
+
+	<!-- jQuery Version 1.11.1 -->
+	<script src="js/ext/jquery.min.js"></script>
+	<!-- Bootstrap Core JavaScript -->
+	<script src="js/ext/bootstrap.min.js"></script>
+
+
 </body>
 </html>

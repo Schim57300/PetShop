@@ -10,7 +10,9 @@
 					//Initialization of filter placeholder
 					$scope.somePlaceholder = 'Find a pet by its identifier';
 					var speciesList = {"categories":[{"id":1,"name":"Dog"},{"id":2,"name":"Cat"},{"id":3,"name":"Lizard"},{"id":4,"name":"Fish"}]};
+					var tagsList = {"tags":[{"id":1,"name":"tag1"},{"id":2,"name":"tag2"},{"id":3,"name":"tag3"},{"id":4,"name":"tag4"}]};
 					$scope.categories = speciesList.categories;
+					$scope.tags = tagsList.tags;
 
 					$scope.refreshList = function() {
 						console.log("Filter=" + $scope.myModel + ".");
@@ -27,6 +29,7 @@
 						console.log("New=" + $scope.newPetName + "/"+ $scope.newPetCategory + ".");
 						ListManager.storeNewPet($scope, $http, $scope.newPetName, $scope.newPetCategory,$scope.newPetPhoto,$scope.newPetTags);
 						$scope.refreshList($scope, $http, $scope.myModel);
+						angular.copy({},$scope.storingPetForm);
 					}
 					
 				} ]);
