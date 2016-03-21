@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,13 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import my.petshop.MyPetShop;
 import my.petshop.models.PetDAO;
 import my.petshop.models.PetEntity;
 
 @RestController
 public class PetShopService {
 	
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(MyPetShop.class);
+	
     @Autowired
     public PetDAO petDao;
 
@@ -27,13 +31,13 @@ public class PetShopService {
      */
     @RequestMapping(value = "/pet", method= RequestMethod.POST)
     public String create(@RequestBody PetHolder pPetHolder, HttpServletResponse response) {
-    
+    	LOGGER.debug("in create"); 
     	if (pPetHolder == null ||
     			pPetHolder.getList().isEmpty() ||
     			pPetHolder.getList().get(0).getClass().isInstance(PetEntity.class)){
     		//Will return HTTP Code 405
     		response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-    		System.out.println("Invalid input ["+pPetHolder.getList()+"]");
+    		LOGGER.error("Invalid input ["+pPetHolder.getList()+"]");
     		return "KO";
     	}
     		
@@ -43,9 +47,10 @@ public class PetShopService {
     } catch (Exception ex) {
 	  	  //Will return HTTP Code 500
 	  	  response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-	  	  System.out.println("Exception raised");
+	  	  LOGGER.error("Exception raised");
 	  	  ex.printStackTrace();
     }
+      LOGGER.debug("Return OK");
       return "OK";
     }
 
@@ -54,25 +59,27 @@ public class PetShopService {
      */
     @RequestMapping(value = "/pet/{id}", method= RequestMethod.DELETE)
     public String delete(@PathVariable("id") String id, HttpServletResponse response) {
+    	LOGGER.debug("In delete with id="+id);
       try {
     	PetEntity pet = petDao.findById(Long.valueOf(id));
     	if (pet == null){
         	//Will return HTTP Code 404
     		response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-    		System.out.println("No pet found with id ["+id+"]");
+    		LOGGER.debug("No pet found with id ["+id+"]");
     	} else {
     		petDao.delete(pet);
     	}
       }catch (NumberFormatException nfe) {
     	//Will return HTTP Code 400
     	response.setStatus(HttpServletResponse.SC_BAD_REQUEST );
-    	System.out.println("NumberFormatException ["+id+"] is not a number");
+    	LOGGER.error("NumberFormatException ["+id+"] is not a number");
       } catch (Exception ex) {
     	  //Will return HTTP Code 500
     	  response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    	  System.out.println("Exception raised ["+id+"]");
+    	  LOGGER.error("Exception raised ["+id+"]");
     	  ex.printStackTrace();
       }
+      LOGGER.debug("return OK");
       return "OK";
     }
     
@@ -83,6 +90,7 @@ public class PetShopService {
     @RequestMapping(value = "/pet/{id}", method= RequestMethod.GET)
     public PetHolder getById(@PathVariable("id") String id, HttpServletResponse response) {
     	
+    	LOGGER.debug("in getById with id="+id);
     	PetHolder output = new PetHolder();
     	try {
     	if (id.trim().equalsIgnoreCase("*")){
@@ -93,18 +101,19 @@ public class PetShopService {
     	if (output.getList().isEmpty() || output.getList().get(0) == null){
         	//Will return HTTP Code 404
     		response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-    		System.out.println("No pet found with id ["+id+"]");
+    		LOGGER.debug("No pet found with id ["+id+"]");
     	}
       }catch (NumberFormatException nfe) {
     	//Will return HTTP Code 400
     	response.setStatus(HttpServletResponse.SC_BAD_REQUEST );
-    	System.out.println("NumberFormatException ["+id+"] is not a number");
+    	LOGGER.error("NumberFormatException ["+id+"] is not a number");
       } catch (Exception ex) {
     	  //Will return HTTP Code 500
     	  response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    	  System.out.println("Exception raised ["+id+"]");
+    	  LOGGER.error("Exception raised ["+id+"]");
     	  ex.printStackTrace();
       }
+      LOGGER.debug("return OK");
       return output;
     }
 }

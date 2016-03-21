@@ -36,32 +36,26 @@ public class PetEntity {
 	private String status;
 
 	public long getId() {
-		System.out.println("PET.getId will return " + id);
 		return id;
 	}
 
 	public void setId(long id) {
-		System.out.println("PET.setId with "+id);
 		this.id = id;
 	}
 
 	public String getName() {
-		System.out.println("PET.getName will return " + name);
 		return name;
 	}
 
 	public void setName(String name) {
-		System.out.println("PET.setName with "+name);
 		this.name = name;
 	}
 
 	public String getStatus() {
-		System.out.println("PET.getStatus will return " + status);
 		return status;
 	}
 
 	public void setStatus(String status) {
-		System.out.println("PET.setStatus with "+status);
 		this.status = status;
 	}
 
@@ -71,12 +65,10 @@ public class PetEntity {
 	}
 
 	public Category getCategory(){
-		System.out.println("PET.getCategory will return " + category);
 		return category;
 	}
 	
 	public void setCategory(Category category){
-		System.out.println("PET.setCategory with "+category);
 		this.category = category;
 	}
 

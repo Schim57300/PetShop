@@ -15,22 +15,18 @@ public class Category {
 	private String name;
  
 	public long getId() {
-    	System.out.println("CATEGORY.getId");
 		return id;
 	}
 
 	public void setId(long id) {
-		System.out.println("CATEGORY.setId"+id);
 		this.id = id;
 	}
 
 	public String getName() {
-		System.out.println("CATEGORY.getName");
 		return name;
 	}
 
 	public void setName(String name) {
-		System.out.println("CATEGORY.setName"+name);
 		this.name = name;
 	}
 //
